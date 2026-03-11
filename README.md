@@ -1,0 +1,94 @@
+# 🏥 Sistema RAG - Hospital Information
+
+Sistema de **Retrieval-Augmented Generation (RAG)** para responder preguntas sobre información hospitalaria.
+
+## Descripción
+
+Sistema que recupera documentos relevantes y genera respuestas precisas usando modelos de IA.
+
+## Modelos Utilizados
+
+- **Embeddings**: `MongoDB/mdbr-leaf-ir`
+- **Lenguaje**: `PleIAs/Pleias-RAG-350M`
+
+## Instalación
+
+```bash
+# Clonar repositorio
+git clone https://github.com/Soren-Madsen/Practica-Final-RA3-Analisis-predictivo-de-informacion.git
+cd Practica-Final-RA3-Analisis-predictivo-de-informacion.
+
+# Crear entorno virtual
+python -m venv .venv
+source .venv/bin/activate
+
+# Instalar dependencias
+pip install -r requirements.txt
+```
+
+## Uso
+
+### Ejecutar ejemplos de prueba
+```bash
+python rag_engine.py
+```
+
+### Pruebas interactivas
+```bash
+python test_query.py
+```
+
+### Uso en código
+```python
+from rag_engine import preguntar
+
+respuesta = preguntar("What is the hospital email?")
+print(respuesta)
+# Output: "The hospital email is testing@gmail.com."
+```
+
+## Funciones Principales
+
+### `recuperar_documentos(consulta, top_k=2, umbral=0.4)`
+Recupera documentos relevantes de la base de conocimiento.
+
+- `consulta`: Pregunta del usuario
+- `top_k`: Número máximo de documentos
+- `umbral`: Similitud mínima (0.0 - 1.0)
+
+### `generar_respuesta(consulta, documentos_recuperados)`
+Genera una respuesta usando el modelo de lenguaje.
+
+### `preguntar(consulta, top_k=2, umbral=0.4)`
+Función completa que recupera documentos y genera la respuesta.
+
+## Ejemplos
+
+```python
+>>> preguntar("What is the hospital email?")
+"The hospital email is testing@gmail.com."
+
+>>> preguntar("What are the working hours?")
+"The hospital's working hours are 7:00 AM - 8:00 PM daily."
+
+>>> preguntar("Where is the hospital located?")
+"The hospital is located at xyz, abc, 1234, Nepal."
+```
+
+## Estructura del Proyecto
+
+```
+├── rag_engine.py       # Motor principal RAG
+├── app.py             # Interfaz Gradio (próximamente)
+├── documents.json     # Base de conocimiento
+├── test_query.py      # Pruebas interactivas
+└── requirements.txt   # Dependencias
+```
+
+## Autor
+
+**Soren Madsen**  
+GitHub: [@Soren-Madsen](https://github.com/Soren-Madsen)
+
+---
+*Última actualización: Marzo 2026*
