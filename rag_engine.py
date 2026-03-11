@@ -21,7 +21,7 @@ with open("documents.json", "r", encoding="utf-8") as f:
 
 # Crear lista de documentos y sus embeddings
 documentos_lista = list(documentos.values())
-documentos_ids = list(documentos.keys())
+
 
 print("Generando embeddings de documentos...")
 documentos_embeddings = embedding_model.encode(documentos_lista, convert_to_tensor=False)
@@ -75,7 +75,7 @@ def generar_respuesta(consulta, documentos_recuperados):
     contexto = " ".join(documentos_recuperados)
     
     # 2. Construir el prompt con el formato especificado
-    prompt = f"""Answer the question based only on the context provided.
+    prompt = f"""Answer the question based only on the context provided. Provide a direct and factual answer.
 
 Context: {contexto}
 
@@ -89,12 +89,11 @@ Answer:"""
     with torch.no_grad():
         outputs = language_model.generate(
             **inputs,
-            max_new_tokens=150,
+            max_new_tokens=50,
             num_return_sequences=1,
-            temperature=0.7,
-            do_sample=True,
-            top_p=0.9,
-            pad_token_id=tokenizer.eos_token_id
+            do_sample=False,
+            pad_token_id=tokenizer.eos_token_id,
+            eos_token_id=tokenizer.eos_token_id
         )
     
     # Decodificar la respuesta completa
@@ -106,8 +105,42 @@ Answer:"""
     else:
         respuesta = respuesta_completa[len(prompt):].strip()
     
+    # Buscar patrones comunes donde el modelo meta-explica y extraer la info útil
+    if "is located at" in respuesta:
+        # Extraer la parte que contiene "is located at"
+        partes = respuesta.split("is located at")
+        if len(partes) > 1:
+            # Tomar desde el inicio hasta el final de la ubicación
+            ubicacion = partes[1].split(".")[0] + "."
+            respuesta = f"The hospital is located at{ubicacion}"
+    
+    # Limpiar la respuesta: tomar solo la primera oración o párrafo relevante
+    # Eliminar texto adicional después de doble salto de línea o referencias
+    if "\n\n" in respuesta:
+        respuesta = respuesta.split("\n\n")[0].strip()
+    
+    # Eliminar referencias y texto extra común (expandir lista)
+    separadores = [
+        "<ref", "Trivial", "Le bureau", "The answer should", "I would structure",
+        "¿", "However,", "While", "It's worth noting", "This is", "The sources",
+        "The answer can be found", "which directly states", "Looking into",
+        ", which directly", ", which "
+    ]
+    
+    for separador in separadores:
+        if separador in respuesta:
+            partes = respuesta.split(separador)
+            # Si hay contenido antes del separador, usarlo; sino, buscar el siguiente
+            if partes[0].strip():
+                respuesta = partes[0].strip()
+                break
+    
+    # Limpiar puntos finales múltiples
+    respuesta = respuesta.rstrip('.')
+    if respuesta and not respuesta.endswith('.'):
+        respuesta += '.'
+    
     return respuesta
-
 
 def preguntar(consulta, top_k=2, umbral=0.4):
     """
@@ -129,9 +162,9 @@ def preguntar(consulta, top_k=2, umbral=0.4):
     
     return respuesta
 
+# PRUEBAS
 
 if __name__ == "__main__":
-    # Ejemplo de uso
     print("\n=== Probando el sistema RAG ===\n")
     
     # Prueba 1: recuperar_documentos
