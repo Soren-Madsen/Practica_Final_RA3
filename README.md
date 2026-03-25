@@ -1,6 +1,6 @@
-# 🏥 Sistema RAG - Hospital Information
+# Sistema RAG - Chat
 
-Sistema de **Retrieval-Augmented Generation (RAG)** para responder preguntas sobre información hospitalaria.
+Sistema de **Retrieval-Augmented Generation (RAG)** para responder preguntas.
 
 ## Descripción
 
@@ -79,11 +79,66 @@ Función completa que recupera documentos y genera la respuesta.
 
 ```
 ├── rag_engine.py       # Motor principal RAG
-├── app.py             # Interfaz Gradio (próximamente)
-├── documents.json     # Base de conocimiento
-├── test_query.py      # Pruebas interactivas
-└── requirements.txt   # Dependencias
+├── app.py              # Interfaz Gradio
+├── documents.json      # Base de conocimiento
+├── test_query.py       # Pruebas interactivas
+├── tests/
+│   └── test_api.py     # Tests de la API
+└── requirements.txt    # Dependencias
 ```
+
+## Despliegue en Hugging Face Spaces
+
+### 1. Crear un Space en Hugging Face
+
+1. Ir a [huggingface.co/spaces](https://huggingface.co/spaces)
+2. Crear un nuevo Space
+3. Seleccionar "Gradio" como SDK
+4. Configurar nombre y visibilidad
+
+### 2. Desplegar la aplicación
+
+```bash
+# Clonar el Space
+git clone https://huggingface.co/spaces/tu-usuario/nombre-del-space
+cd nombre-del-space
+
+# Copiar archivos del proyecto
+cp ../Practica-Final-RA3-Analisis-predictivo-de-informacion/* .
+
+# Push a Hugging Face
+git add .
+git commit -m "Deploy RAG Chat"
+git push
+```
+
+### 3. Probar la API con Gradio Client
+
+Una vez desplegado, puedes probar la API usando el script `test_api.py`:
+
+```python
+from gradio_client import Client
+
+client = Client("tu-usuario/nombre-del-space")
+result = client.predict(
+    query="What is the hospital email?",
+    top_k=2,
+    umbral=0.55,
+    api_name="/ask"
+)
+print(result[0])  # Respuesta
+print(result[1])  # Documentos recuperados
+```
+
+**Para ejecutar el test:**
+
+```bash
+python tests/test_api.py
+```
+
+Si todo está correcto, verás:
+- La respuesta generada
+- Los documentos recuperados
 
 ## Autor
 

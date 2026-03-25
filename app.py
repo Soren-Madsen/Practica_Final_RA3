@@ -1,5 +1,5 @@
 import gradio as gr
-from rag_engine import recuperar_documentos, generar_respuesta, preguntar
+from rag_engine import recuperar_documentos, generar_respuesta
 
 
 def ask(query, top_k, umbral):
@@ -37,13 +37,14 @@ def ask(query, top_k, umbral):
 
 
 # Crear la interfaz Gradio
-with gr.Blocks(title="Sistema RAG - Hospital Information") as demo:
+with gr.Blocks(title="Chat RAG") as demo:
     # Título y descripción
     gr.Markdown(
         """
-        # 🏥 Sistema RAG - Hospital Information Assistant
+        # Chat RAG 
         
-        Este sistema utiliza **Retrieval-Augmented Generation (RAG)** para responder preguntas sobre información hospitalaria.
+        Este sistema utiliza RAG para responder preguntas sobre información hospitalaria.
+
         El sistema recupera documentos relevantes y genera respuestas basadas únicamente en el contexto proporcionado.
         
         **Instrucciones:** Escribe tu pregunta en inglés, ajusta los parámetros si lo deseas, y haz clic en "Enviar".
@@ -63,9 +64,9 @@ with gr.Blocks(title="Sistema RAG - Hospital Information") as demo:
             top_k_slider = gr.Slider(
                 minimum=1,
                 maximum=5,
-                value=5,
+                value=1,
                 step=1,
-                label="Top K - Número de documentos a recuperar"
+                label="Top K - documentos"
             )
             
             # Input: Slider para umbral
@@ -101,19 +102,6 @@ with gr.Blocks(title="Sistema RAG - Hospital Information") as demo:
         fn=ask,
         inputs=[query_input, top_k_slider, umbral_slider],
         outputs=[respuesta_output, docs_output]
-    )
-    
-    # Ejemplos de consultas
-    gr.Markdown("### 💡 Ejemplos de preguntas:")
-    gr.Examples(
-        examples=[
-            ["What is the hospital email?", 2, 0.4],
-            ["What are the working hours?", 2, 0.4],
-            ["Where is the hospital located?", 2, 0.4],
-            ["What services does the hospital provide?", 3, 0.3],
-            ["How can I contact the hospital?", 2, 0.5]
-        ],
-        inputs=[query_input, top_k_slider, umbral_slider]
     )
 
 # Lanzar la interfaz

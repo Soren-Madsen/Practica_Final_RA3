@@ -7,7 +7,7 @@ from rag_engine import preguntar, recuperar_documentos
 
 def main():
     print("\n" + "="*80)
-    print("🏥 SISTEMA RAG - PRUEBA INTERACTIVA")
+    print("SISTEMA RAG - PRUEBA INTERACTIVA")
     print("="*80 + "\n")
     
     while True:

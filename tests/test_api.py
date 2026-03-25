@@ -3,9 +3,9 @@
 
 from gradio_client import Client
 
-client = Client("manuell01/practica-chat")
+client = Client("SorenMad/Chat-RAG")
 result = client.predict(
-	query="Where is the hospital located!!",
+	query="Where is the hospital located?",
 	top_k=5,
 	umbral=0.55,
 	api_name="/ask"
