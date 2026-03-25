@@ -3,7 +3,7 @@
 
 from gradio_client import Client
 
-client = Client("SorenMad/ChatRAG")
+client = Client("SorenMad/ChatRAG2")
 result = client.predict(
 	query="Where is the hospital located?",
 	top_k=5,
